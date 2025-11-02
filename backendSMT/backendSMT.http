@@ -1,0 +1,6 @@
+@backendSMT_HostAddress = http://localhost:5182
+
+GET {{backendSMT_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
