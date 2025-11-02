@@ -1,0 +1,40 @@
+<div class="custom-login">
+  <div class="custom-login-card">
+    <div class="custom-login-header">
+      <img src="/assets/TRPL.png" alt="Polibatam" />
+    </div>
+
+    <div class="card-body">
+      <div class="custom-login-title">Login to your account</div>
+
+      <!-- 🔑 Tambahkan formGroup binding di sini -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="custom-form-group">
+          <label class="custom-form-label">Username</label>
+          <input
+            type="text"
+            class="custom-form-control"
+            formControlName="username"
+            placeholder="Enter Username"
+          />
+        </div>
+
+        <div class="custom-form-group">
+          <label class="custom-form-label">Password</label>
+          <input
+            type="password"
+            class="custom-form-control"
+            formControlName="password"
+            placeholder="Password"
+          />
+        </div>
+
+        <div *ngIf="errorMessage" class="custom-text-muted">{{ errorMessage }}</div>
+
+        <div class="custom-form-footer">
+          <button class="custom-btn" (click)="onSubmit()" type="button">Sign in</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

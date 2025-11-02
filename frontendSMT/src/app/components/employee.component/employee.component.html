@@ -1,0 +1,233 @@
+<div class="my-3 my-md-5">
+  <div class="container-fluid">
+    <div class="row row-cards" *ngIf="dashboard">
+      <!-- 📊 Kotak Statistik -->
+      <div class="col-6 col-sm-4 col-lg-3">
+        <div class="card">
+          <div class="card-body p-3 text-center">
+            <div class="h1 m-0" style="margin-top: 10px !important">
+              {{ dashboard?.finishedToday }}
+            </div>
+            <div class="text-muted mb-4" style="margin-top: 8px">Finished Today</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-lg-3">
+        <div class="card">
+          <div class="card-body p-3 text-center">
+            <div class="h1 m-0" style="margin-top: 10px !important">
+              {{ dashboard?.averageWorkmanship }}
+            </div>
+            <div class="text-muted mb-4" style="margin-top: 8px">Average Workmanship</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-lg-3">
+        <div class="card">
+          <div class="card-body p-3 text-center">
+            <div class="h1 m-0" style="margin-top: 10px !important">
+              {{ dashboard?.totalWorkmanship }}
+            </div>
+            <div class="text-muted mb-4" style="margin-top: 8px">Total Workmanship</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-sm-4 col-lg-3">
+        <div class="card">
+          <div class="card-body p-3 text-center">
+            <div class="h1 m-0" style="margin-top: 10px !important">
+              {{ dashboard?.efficiencyScore }}
+            </div>
+            <div class="text-muted mb-4" style="margin-top: 8px">Efficiency Score</div>
+          </div>
+        </div>
+      </div>
+      <!-- 📊 Kotak Statistik -->
+
+      <!-- 📋 Tabel Work Logs -->
+      <!-- <div class="col-lg-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="card-title">Task Log</h3>
+            <select class="form-control" [(ngModel)]="selectedProduct" (change)="onProductChange()">
+              <option [ngValue]="null">Select Product</option>
+              <option *ngFor="let p of products" [ngValue]="p.productId">
+                {{ p.productName }}
+              </option>
+            </select>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped" id="workLogTable">
+              <thead>
+                <tr>
+                  <th style="text-align: center">No.</th>
+                  <th>Product Name</th>
+                  <th>Start Time</th>
+                  <th style="text-align: center">Total Time</th>
+                  <th style="text-align: center">Status</th>
+                  <th class="actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let log of workLogs; let i = index" [attr.data-worklog-id]="log.id">
+                  <td style="text-align: center">{{ i + 1 }}</td>
+                  <td>{{ log.productName }}</td>
+                  <td>{{ log.startTime | date : 'short' }}</td>
+                  <td style="text-align: center">{{ convertSeconds(activeTimers[log.workLogId] || log.totalTime) }}</td>
+                  <td style="text-align: center">
+                    <span
+                      class="badge"
+                      [ngClass]="{
+                        'badge-warning blink': log.statusName !== 'Completed',
+                        'badge-success': log.statusName === 'Completed'
+                      }"
+                    >
+                      {{ log.statusName }}
+                    </span>
+                  </td>
+                  <td class="actions text-center">
+                    <button class="btn btn-success btn-sm" (click)="markAsCompleted(log.workLogId)">
+                      Done
+                    </button>
+                    <button class="btn btn-danger btn-sm" (click)="deleteWorkLog(log.workLogId)">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> -->
+      <!-- 📋 Tabel Work Logs -->
+
+      <!-- 📋 Tabel Work Logs -->
+      <div class="col-lg-12">
+        <div class="card p-3">
+          <div class="card-header d-flex justify-content-between align-items-center mb-3">
+            <h3 class="card-title m-0">Task Log</h3>
+          </div>
+      
+          <!-- 🔹 Select Product -->
+          <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>Select Product</mat-label>
+            <mat-select [(ngModel)]="selectedProduct" (selectionChange)="onProductChange()">
+              <mat-option *ngFor="let p of products" [value]="p.productId">
+                {{ p.productName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+      
+          <!-- 🔹 Material Table -->
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" matSort class="w-100">
+      
+              <!-- No -->
+              <ng-container matColumnDef="no">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
+                <td mat-cell *matCellDef="let log; let i = index">{{ i + 1 }}</td>
+              </ng-container>
+      
+              <!-- Product -->
+              <ng-container matColumnDef="productName">
+                <th mat-header-cell *matHeaderCellDef>Product</th>
+                <td mat-cell *matCellDef="let log">{{ log.productName }}</td>
+              </ng-container>
+      
+              <!-- Start Time -->
+              <ng-container matColumnDef="startTime">
+                <th mat-header-cell *matHeaderCellDef>Start Time</th>
+                <td mat-cell *matCellDef="let log">{{ log.startTime | date:'short' }}</td>
+              </ng-container>
+      
+              <!-- Total Time -->
+              <ng-container matColumnDef="totalTime">
+                <th mat-header-cell *matHeaderCellDef>Total Time</th>
+                <td mat-cell *matCellDef="let log">
+                  {{ convertSeconds(activeTimers[log.workLogId] || log.totalTime) }}
+                </td>
+              </ng-container>
+      
+              <!-- Status -->
+              <ng-container matColumnDef="statusName">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let log">
+                  <span class="badge" [ngClass]="{
+                      'badge-success': log.statusName === 'Completed',
+                      'badge-warning blink': log.statusName !== 'Completed'
+                    }">
+                    {{ log.statusName }}
+                  </span>
+                </td>
+              </ng-container>
+      
+              <!-- Actions -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let log">
+                  <button mat-raised-button color="primary" class="me-2" (click)="markAsCompleted(log.workLogId)" [disabled]="log.statusName === 'Completed'">
+                    Done
+                  </button>
+                  <button mat-raised-button color="warn" (click)="deleteWorkLog(log.workLogId)" [disabled]="log.statusName === 'Completed'">
+                    Delete
+                  </button>
+                </td>
+              </ng-container>
+      
+              <!-- Rows -->
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+      
+            <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+          </div>
+        </div>
+      </div>
+      <!-- 📋 Tabel Work Logs -->
+
+      <!-- 📈 Development Activity Chart -->
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+            <h3 class="card-title mb-0">Development Activity</h3>
+            <!-- <div class="filter-section d-flex align-items-end">
+              <div class="mr-2">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" class="form-control" [(ngModel)]="startDate" />
+              </div>
+              <div class="mr-2">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" class="form-control" [(ngModel)]="endDate" />
+              </div>
+              <button type="button" id="filterButton" class="btn btn-primary" (click)="loadChart()">
+                Filter
+              </button>
+            </div> -->
+            <div class="filter-section d-flex align-items-end">
+              <mat-form-field appearance="fill" class="mr-2">
+                <mat-label>Start Date</mat-label>
+                <input matInput [matDatepicker]="picker1" [(ngModel)]="startDate" />
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill" class="mr-2">
+                <mat-label>End Date</mat-label>
+                <input matInput [matDatepicker]="picker2" [(ngModel)]="endDate" />
+                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+              </mat-form-field>
+
+              <button mat-raised-button color="primary" (click)="loadChart()">Filter</button>
+            </div>
+          </div>
+          <div id="developmentChart" style="height: 480px"></div>
+        </div>
+      </div>
+      <!-- 📈 Development Activity Chart -->
+    </div>
+  </div>
+</div>

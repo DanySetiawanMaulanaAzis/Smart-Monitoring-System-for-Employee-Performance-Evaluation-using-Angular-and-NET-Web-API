@@ -1,0 +1,70 @@
+<div class="page">
+  <div class="page-main">
+    <!-- Navbar -->
+    <div class="header py-4">
+      <div class="container-fluid">
+        <div class="d-flex">
+          <a class="header-brand" href="#">
+            <img src="assets/TRPL.png" class="header-brand-img" alt="Polibatam"
+                 style="width: 180px !important; height: 60px !important;">
+          </a>
+
+          <div class="text-center mx-auto">
+            <h1 style="margin: 0; font-size: 1.5rem; color: #333; margin-left: 140px;">
+              Smart Monitoring System
+            </h1>
+          </div>
+
+          <div class="d-flex order-lg-2 ml-auto">
+            <div class="dropdown">
+              <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
+                <span class="avatar" style="background-image: url(./demo/faces/female/25.jpg)"></span>
+                <span class="ml-2 d-none d-lg-block">
+                  <span class="text-default">{{ username }}</span>
+                  <small class="text-muted d-block mt-1">{{ role }}</small>
+                </span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                <button class="dropdown-item" (click)="logout()">
+                  <i class="dropdown-icon fe fe-log-out"></i> Sign out
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <a href="#" class="header-toggler d-lg-none ml-3 ml-lg-0"
+             data-toggle="collapse" data-target="#headerMenuCollapse">
+            <span class="header-toggler-icon"></span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Navbar end -->
+
+    <!-- Main content -->
+    <router-outlet></router-outlet>
+    <!-- Main content end -->
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container-fluid">
+      <div class="row align-items-center flex-row-reverse">
+        <div class="col-auto ml-lg-auto">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <ul class="list-inline list-inline-dots mb-0">
+                <li class="list-inline-item"><a href="#">KELOMPOK PBL</a></li>
+                <li class="list-inline-item"><a href="#">GOES TO KMIPN</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-auto mt-3 mt-lg-0 text-center">
+          KELOMPOK PBL & WILL GOING TO KMIPN
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- Footer end -->
+</div>

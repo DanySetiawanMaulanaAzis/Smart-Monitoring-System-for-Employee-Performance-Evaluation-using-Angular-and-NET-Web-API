@@ -1,0 +1,100 @@
+<div class="container-fluid mt-4 ">
+  <div class="row">
+    <!-- Total Task Completed -->
+    <div class="col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5>Total Task Completed</h5>
+          <div class="d-flex gap-2">
+            <input type="date" [(ngModel)]="startDate1" class="form-control" />
+            <input type="date" [(ngModel)]="endDate1" class="form-control" />
+            <button class="btn btn-primary" (click)="loadTotalChart()">Filter</button>
+          </div>
+        </div>
+        <div id="totalChart" style="height: 400px;"></div>
+      </div>
+    </div>
+
+    <!-- Employee Performance -->
+    <div class="col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5>Employee Performance</h5>
+          <div class="d-flex gap-2">
+            <input type="date" [(ngModel)]="startDate2" class="form-control" />
+            <input type="date" [(ngModel)]="endDate2" class="form-control" />
+            <button class="btn btn-primary" (click)="loadUserPerformanceChart()">Filter</button>
+          </div>
+        </div>
+        <div id="userPerformanceChart" style="height: 400px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monitoring Table -->
+  <mat-card class="mt-4">
+    <mat-card-header>
+      <mat-card-title>Employee Monitoring Dashboard Performance</mat-card-title>
+    </mat-card-header>
+  
+    <mat-card-content>
+      <div class="table-container">
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+          <mat-label>Filter by username</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Search username..." />
+        </mat-form-field>
+  
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 w-100">
+  
+          <!-- Username -->
+          <ng-container matColumnDef="username">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
+            <td mat-cell *matCellDef="let row">{{ row.username }}</td>
+          </ng-container>
+  
+          <!-- Finished Today -->
+          <ng-container matColumnDef="finishedToday">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Finished Today</th>
+            <td mat-cell *matCellDef="let row">{{ row.finishedToday }}</td>
+          </ng-container>
+  
+          <!-- Average Workmanship -->
+          <ng-container matColumnDef="averageWorkmanship">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Average Workmanship</th>
+            <td mat-cell *matCellDef="let row">{{ row.averageWorkmanship }}</td>
+          </ng-container>
+  
+          <!-- Total Workmanship -->
+          <ng-container matColumnDef="totalWorkmanship">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Workmanship</th>
+            <td mat-cell *matCellDef="let row">{{ row.totalWorkmanship }}</td>
+          </ng-container>
+  
+          <!-- Tomorrow's Forecast -->
+          <ng-container matColumnDef="predictedTomorrow">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tomorrow's Forecast</th>
+            <td mat-cell *matCellDef="let row">{{ row.predictedTomorrow }}</td>
+          </ng-container>
+  
+          <!-- Performance -->
+          <ng-container matColumnDef="performanceResult">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Performance</th>
+            <td mat-cell *matCellDef="let row">
+              <span [ngClass]="{
+                  'text-success': row.performanceResult === 'High',
+                  'text-warning': row.performanceResult === 'Medium',
+                  'text-danger': row.performanceResult === 'Low'
+                }">{{ row.performanceResult }}</span>
+            </td>
+          </ng-container>
+  
+          <!-- Header & Rows -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+  
+        <mat-paginator [pageSizeOptions]="[10, 30, 45]" showFirstLastButtons></mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
