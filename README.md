@@ -97,6 +97,7 @@ Datasets used:
 
 * Factory Workers Daily Performance and Attrition
 * Employee Activity and Evaluation Dataset
+* Productivity Prediction of Garment Employees
 
 ## Author
 
