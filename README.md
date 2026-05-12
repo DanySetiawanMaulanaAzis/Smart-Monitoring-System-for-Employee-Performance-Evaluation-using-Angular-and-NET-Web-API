@@ -1,0 +1,2 @@
+# Smart-Monitoring-System-for-Employee-Performance-Evaluation-using-Angular-and-NET-Web-API
+This system is a web-based platform designed to monitor, analyze, and predict employee performance in the manufacturing industry. It integrates an ASP.NET Web Forms dashboard with a deep learning (DL) model using the Flask API to provide real-time insights and accurate predictions regarding employee performance.
