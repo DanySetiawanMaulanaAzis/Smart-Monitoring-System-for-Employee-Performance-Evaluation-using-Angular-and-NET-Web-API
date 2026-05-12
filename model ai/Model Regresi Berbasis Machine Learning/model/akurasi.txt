@@ -1,4 +1,0 @@
-MAE: 2.49
-R² Score: 0.98
-RMSE: 4.31
-MAPE: 9.74%

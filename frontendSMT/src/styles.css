@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+button.mat-mdc-raised-button.export-btn {
+  background-color: #17c203 !important;
+  color: white !important;
+}
+
+button.mat-mdc-raised-button.export-btn:hover {
+  background-color: #0f7d03 !important;
+}

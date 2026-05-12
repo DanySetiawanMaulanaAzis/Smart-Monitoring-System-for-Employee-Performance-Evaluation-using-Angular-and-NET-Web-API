@@ -1,63 +1,84 @@
 /* employee.component.css */
-.dropdown-container {
+
+/* Grid improvement for Task Log and Select Product */
+.task-log-header {
+  display: grid;
+  grid-template-columns: 70% 12% 16%; /* 3 kolom sama besar */
+  align-items: center;
+  gap: 1rem;
+  /* margin-bottom: 1.5rem; */
+}
+
+/* Title */
+.task-log-title {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
 }
 
-.dropdown-container .form-control {
-  width: 400px; /* Atur lebar dropdown sesuai kebutuhan */
+/* Export Button */
+.task-log-export {
+  display: flex;
+  justify-content: center;
 }
 
-.card-header {
-  background-color: #007bff;
-  color: black;
-  padding: 10px;
+/* Export Button Style */
+.export-btn {
+  background-color: #17c203; /* warna accent Angular Material */
+  color: white;
 }
 
-.card-title {
-  margin: 0;
+/* Hover effect (optional tapi recommended) */
+.export-btn:hover {
+  background-color: #0f7d03;
 }
 
-.dropdown-container .form-control {
-  width: auto;
+/* Filter */
+.task-log-filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
-.table-responsive {
-  margin-top: 20px;
+/* Responsive adjustment for select product */
+@media (max-width: 767.98px) {
+  .row.align-items-center.mb-3 .col-md-6 {
+    margin-bottom: 1rem;
+    justify-content: flex-start;
+  }
 }
 
-#workLogTable {
+.mat-elevation-z8 {
+  margin-top: 0.5rem;
+  border-radius: 0.5rem;
+  background: #fff;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.08);
+  padding: 0.5rem 0.5rem 1rem 0.5rem;
+}
+
+table.mat-table {
   width: 100%;
   border-collapse: collapse;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
-
-#workLogTable th,
-#workLogTable td {
+table.mat-table th,
+table.mat-table td {
   padding: 12px 15px !important;
   border: 1px solid #ddd !important;
-  color: black !important; /* Warna teks hitam */
+  color: #222 !important;
 }
-
-#workLogTable thead {
-  background-color: white !important; /* Warna latar belakang putih */
-  color: black !important; /* Warna teks hitam */
+table.mat-table thead {
+  background-color: #f8f9fa !important;
+  color: #222 !important;
 }
-
-#workLogTable tbody tr:nth-child(even) {
+table.mat-table tbody tr:nth-child(even) {
   background-color: #f2f2f2 !important;
 }
-
-#workLogTable tbody tr:hover {
-  background-color: #ddd !important;
+table.mat-table tbody tr:hover {
+  background-color: #e9ecef !important;
 }
-
-#workLogTable th {
+table.mat-table th {
   text-align: left;
 }
-
-#workLogTable .actions {
+table.mat-table .actions {
   text-align: center;
 }
 
@@ -66,11 +87,9 @@
     opacity: 0;
   }
 }
-
 .blink {
   animation: blink 1s linear infinite;
 }
-
 .badge {
   display: inline-block;
   padding: 0.5em 0.75em;
@@ -83,40 +102,33 @@
   vertical-align: baseline;
   border-radius: 0.25rem;
 }
-
 .badge-warning {
-  background-color: #ffc107; /* Warna kuning */
-  color: #212529; /* Warna teks */
-  animation: blink 1.5s linear infinite; /* Tambahkan animasi blink */
+  background-color: #ffc107;
+  color: #212529;
+  animation: blink 1.5s linear infinite;
 }
-
 .badge-success {
-  background-color: #28a745; /* Warna hijau */
-  color: #fff; /* Warna teks */
+  background-color: #28a745;
+  color: #fff;
 }
-
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
 }
-
 .filter-section {
   display: flex;
   align-items: flex-end;
   gap: 10px;
 }
-
 .filter-section .mr-2 {
   margin-right: 10px;
 }
-
 #startDate,
 #endDate {
   width: 100%;
 }
-
 #filterButton {
-  margin-top: 24px; /* Sesuaikan agar tidak terlalu dekat dengan elemen lainnya */
+  margin-top: 24px;
 }

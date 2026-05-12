@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("backendSMT")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab8627c3394271ae093c179c951c549e2b35cb64")]
 [assembly: System.Reflection.AssemblyProductAttribute("backendSMT")]
 [assembly: System.Reflection.AssemblyTitleAttribute("backendSMT")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

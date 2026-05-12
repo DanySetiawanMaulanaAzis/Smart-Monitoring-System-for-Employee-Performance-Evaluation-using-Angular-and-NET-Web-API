@@ -139,7 +139,53 @@ namespace backendSMT.Repositories
             }
 
             // 3. Hitung EfficiencyScore via API eksternal
-            int efficiencyScore = await GetEfficiencyScoreAsync(finishedToday, avgWorkmanship, totalWorkmanship);
+            //int efficiencyScore = await GetEfficiencyScoreAsync(finishedToday, avgWorkmanship, totalWorkmanship);
+
+            // ==============================
+            // 3. Ambil histori 7 hari terakhir
+            // ==============================
+            var sequence = new List<List<double>>();
+
+            string historyQuery = @"
+                SELECT TOP 7
+                    FinishedToday,
+                    AvgWorkmanship,
+                    TotalWorkmanship
+                FROM DailyUserSummary2
+                WHERE UserId = @UserId
+                ORDER BY WorkDate DESC";
+
+            using (var historyCmd = new SqlCommand(historyQuery, conn))
+            {
+                historyCmd.Parameters.AddWithValue("@UserId", userId);
+
+                using var historyReader = await historyCmd.ExecuteReaderAsync();
+
+                while (await historyReader.ReadAsync())
+                {
+                    sequence.Add(new List<double>
+                    {
+                        Convert.ToDouble(historyReader["FinishedToday"]),
+                        Convert.ToDouble(historyReader["AvgWorkmanship"]),
+                        Convert.ToDouble(historyReader["TotalWorkmanship"])
+                    });
+                }
+            }
+
+            // urutkan lama → baru
+            sequence.Reverse();
+
+            // validasi
+            if (sequence.Count < 7)
+            {
+                Console.WriteLine("❌ Data histori kurang dari 7 hari");
+                return;
+            }
+
+            // ==============================
+            // 3.1. Hitung EfficiencyScore via API
+            // ==============================
+            double efficiencyScore = await GetEfficiencyScoreAsync(sequence);
 
             // 4. Cek apakah data DailyUserSummary2 hari ini sudah ada
             string checkQuery = @"SELECT COUNT(*) FROM DailyUserSummary2 WHERE UserId=@UserId AND WorkDate=@WorkDate";
@@ -193,29 +239,71 @@ namespace backendSMT.Repositories
         }
 
 
+        // untuk memanggil API eksternal untuk menghitung EfficiencyScore
+        //private async Task<int> GetEfficiencyScoreAsync(int finishedToday, int avgWorkmanship, int totalWorkmanship)
+        //{
+        //    var payload = new { FinishedToday = finishedToday, AvgWorkmanship = avgWorkmanship, TotalWorkmanship = totalWorkmanship };
+        //    var json = JsonConvert.SerializeObject(payload);
+        //    var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        private async Task<int> GetEfficiencyScoreAsync(int finishedToday, int avgWorkmanship, int totalWorkmanship)
+        //    try
+        //    {
+        //        var response = await _httpClient.PostAsync("predict/efficiency", content);
+        //        response.EnsureSuccessStatusCode();
+        //        var responseJson = await response.Content.ReadAsStringAsync();
+        //        dynamic result = JsonConvert.DeserializeObject(responseJson);
+        //        return (int)result.EfficiencyScore;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Efficiency API Error: {ex.Message}");
+        //        return 0;
+        //    }
+        //}
+
+
+        // untuk memanggil API eksternal untuk menghitung EfficiencyScore
+        private async Task<double> GetEfficiencyScoreAsync(
+            List<List<double>> sequence)
         {
-            var payload = new { FinishedToday = finishedToday, AvgWorkmanship = avgWorkmanship, TotalWorkmanship = totalWorkmanship };
+            var payload = new
+            {
+                sequence = sequence
+            };
+
             var json = JsonConvert.SerializeObject(payload);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var content = new StringContent(
+                json,
+                Encoding.UTF8,
+                "application/json"
+            );
 
             try
             {
-                var response = await _httpClient.PostAsync("predict/efficiency", content);
+                var response = await _httpClient.PostAsync(
+                    "predict/efficiency",
+                    content
+                );
+
                 response.EnsureSuccessStatusCode();
+
                 var responseJson = await response.Content.ReadAsStringAsync();
+
                 dynamic result = JsonConvert.DeserializeObject(responseJson);
-                return (int)result.EfficiencyScore;
+
+                return (double)result.EfficiencyScore;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Efficiency API Error: {ex.Message}");
+
                 return 0;
             }
         }
 
 
-
+        // GET all products
         public async Task<List<ProductDto>> GetProductsAsync()
         {
             var products = new List<ProductDto>();

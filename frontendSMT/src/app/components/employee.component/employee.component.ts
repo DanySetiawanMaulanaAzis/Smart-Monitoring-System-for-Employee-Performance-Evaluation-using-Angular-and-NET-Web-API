@@ -29,6 +29,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ViewChild } from '@angular/core';
+
+import * as XLSX from 'xlsx';
+
 declare var $: any;
 
 @Component({
@@ -320,5 +323,45 @@ export class EmployeeComponent implements OnInit, AfterViewInit {
       },
       error: (err) => console.error('Error loading chart:', err),
     });
+  }
+
+  exportToExcel(): void {
+    const data = this.workLogs.map((log, index) => ({
+      No: index + 1,
+      Product: log.productName,
+      StartTime: moment(log.startTime).format('DD-MM-YYYY HH:mm'),
+      TotalTime: this.convertSeconds(log.totalTime),
+      Status: log.statusName,
+    }));
+
+    // Buat worksheet
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+
+    // Buat workbook
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'Task Log': worksheet },
+      SheetNames: ['Task Log'],
+    };
+
+    // Convert ke binary
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    // Buat blob
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+
+    // 🔥 DOWNLOAD TANPA LIBRARY
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'task-log.xlsx';
+    link.click();
+
+    window.URL.revokeObjectURL(url);
   }
 }

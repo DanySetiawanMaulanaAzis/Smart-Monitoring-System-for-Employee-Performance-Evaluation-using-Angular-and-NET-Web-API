@@ -107,82 +107,95 @@
       <!-- 📋 Tabel Work Logs -->
       <div class="col-lg-12">
         <div class="card p-3">
-          <div class="card-header d-flex justify-content-between align-items-center mb-3">
-            <h3 class="card-title m-0">Task Log</h3>
+          <div class="task-log-header">
+            <div class="task-log-title">
+              <h3 class="card-title">Task Log</h3>
+            </div>
+
+            <!-- Export Button -->
+            <div class="task-log-export">
+              <button mat-raised-button class="export-btn" (click)="exportToExcel()">
+                Export Excel
+              </button>
+            </div>
+          
+            <div class="task-log-filter">
+              <mat-form-field appearance="outline">
+                <mat-label>Select Product</mat-label>
+                <mat-select [(ngModel)]="selectedProduct" (selectionChange)="onProductChange()">
+                  <mat-option *ngFor="let p of products" [value]="p.productId">
+                    {{ p.productName }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
           </div>
-      
-          <!-- 🔹 Select Product -->
-          <mat-form-field appearance="outline" class="w-100 mb-3">
-            <mat-label>Select Product</mat-label>
-            <mat-select [(ngModel)]="selectedProduct" (selectionChange)="onProductChange()">
-              <mat-option *ngFor="let p of products" [value]="p.productId">
-                {{ p.productName }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-      
-          <!-- 🔹 Material Table -->
-          <div class="mat-elevation-z8">
-            <table mat-table [dataSource]="dataSource" matSort class="w-100">
-      
-              <!-- No -->
-              <ng-container matColumnDef="no">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
-                <td mat-cell *matCellDef="let log; let i = index">{{ i + 1 }}</td>
-              </ng-container>
-      
-              <!-- Product -->
-              <ng-container matColumnDef="productName">
-                <th mat-header-cell *matHeaderCellDef>Product</th>
-                <td mat-cell *matCellDef="let log">{{ log.productName }}</td>
-              </ng-container>
-      
-              <!-- Start Time -->
-              <ng-container matColumnDef="startTime">
-                <th mat-header-cell *matHeaderCellDef>Start Time</th>
-                <td mat-cell *matCellDef="let log">{{ log.startTime | date:'short' }}</td>
-              </ng-container>
-      
-              <!-- Total Time -->
-              <ng-container matColumnDef="totalTime">
-                <th mat-header-cell *matHeaderCellDef>Total Time</th>
-                <td mat-cell *matCellDef="let log">
-                  {{ convertSeconds(activeTimers[log.workLogId] || log.totalTime) }}
-                </td>
-              </ng-container>
-      
-              <!-- Status -->
-              <ng-container matColumnDef="statusName">
-                <th mat-header-cell *matHeaderCellDef>Status</th>
-                <td mat-cell *matCellDef="let log">
-                  <span class="badge" [ngClass]="{
-                      'badge-success': log.statusName === 'Completed',
-                      'badge-warning blink': log.statusName !== 'Completed'
-                    }">
-                    {{ log.statusName }}
-                  </span>
-                </td>
-              </ng-container>
-      
-              <!-- Actions -->
-              <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Actions</th>
-                <td mat-cell *matCellDef="let log">
-                  <button mat-raised-button color="primary" class="me-2" (click)="markAsCompleted(log.workLogId)" [disabled]="log.statusName === 'Completed'">
-                    Done
-                  </button>
-                  <button mat-raised-button color="warn" (click)="deleteWorkLog(log.workLogId)" [disabled]="log.statusName === 'Completed'">
-                    Delete
-                  </button>
-                </td>
-              </ng-container>
-      
-              <!-- Rows -->
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            </table>
-      
-            <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+
+          <div class="row">
+            <div class="col-12">
+              <div class="mat-elevation-z8">
+                <table mat-table [dataSource]="dataSource" matSort class="w-100">
+
+                  <!-- No -->
+                  <ng-container matColumnDef="no">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
+                    <td mat-cell *matCellDef="let log; let i = index">{{ i + 1 }}</td>
+                  </ng-container>
+
+                  <!-- Product -->
+                  <ng-container matColumnDef="productName">
+                    <th mat-header-cell *matHeaderCellDef>Product</th>
+                    <td mat-cell *matCellDef="let log">{{ log.productName }}</td>
+                  </ng-container>
+
+                  <!-- Start Time -->
+                  <ng-container matColumnDef="startTime">
+                    <th mat-header-cell *matHeaderCellDef>Start Time</th>
+                    <td mat-cell *matCellDef="let log">{{ log.startTime | date:'short' }}</td>
+                  </ng-container>
+
+                  <!-- Total Time -->
+                  <ng-container matColumnDef="totalTime">
+                    <th mat-header-cell *matHeaderCellDef>Total Time</th>
+                    <td mat-cell *matCellDef="let log">
+                      {{ convertSeconds(activeTimers[log.workLogId] || log.totalTime) }}
+                    </td>
+                  </ng-container>
+
+                  <!-- Status -->
+                  <ng-container matColumnDef="statusName">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let log">
+                      <span class="badge" [ngClass]="{
+                          'badge-success': log.statusName === 'Completed',
+                          'badge-warning blink': log.statusName !== 'Completed'
+                        }">
+                        {{ log.statusName }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <!-- Actions -->
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let log">
+                      <button mat-raised-button color="primary" class="me-2" (click)="markAsCompleted(log.workLogId)" [disabled]="log.statusName === 'Completed'">
+                        Done
+                      </button>
+                      <button mat-raised-button color="warn" (click)="deleteWorkLog(log.workLogId)" [disabled]="log.statusName === 'Completed'">
+                        Delete
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <!-- Rows -->
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+
+                <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+              </div>
+            </div>
           </div>
         </div>
       </div>

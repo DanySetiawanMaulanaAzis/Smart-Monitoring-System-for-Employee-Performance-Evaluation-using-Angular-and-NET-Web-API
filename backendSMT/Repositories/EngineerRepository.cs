@@ -132,7 +132,7 @@ namespace backendSMT.Repositories
                 int predictedTomorrow = await GetLSTMPredictionAsync(sequence);
 
                 // Prediksi performance (Low/Medium/High)
-                int prediction = await GetPerformancePredictionAsync(finishedToday, avgWorkSeconds, totalWork);
+                int prediction = await GetPerformancePredictionAsync((sequence));
                 string performanceLabel = prediction switch
                 {
                     0 => "Low",
@@ -171,13 +171,25 @@ namespace backendSMT.Repositories
                 SELECT 
                     d.WorkDate,
                     ISNULL(s.FinishedToday, 0) AS FinishedToday,
-                    ISNULL(s.EfficiencyScore, 0) AS EfficiencyScore,
-                    ISNULL(s.TotalWorkmanship, 0) AS TotalWorkmanship
+                    ISNULL(s.TotalWorkmanship, 0) AS TotalWorkmanship,
+                    ISNULL(s.AvgWorkmanship, 0) AS AvgWorkmanship,           
+                    ISNULL(s.PerformanceCategory, 0) AS PerformanceCategory  
                 FROM Last7Days d
                 LEFT JOIN DailyUserSummary2 s ON s.WorkDate = d.WorkDate AND s.UserId = @UserId
                 ORDER BY d.WorkDate";
 
-            var data = await connection.QueryAsync(query, new { UserId = userId });
+            var query2 = @"
+                SELECT TOP 7
+                    WorkDate,
+                    ISNULL(FinishedToday, 0) AS FinishedToday,
+                    ISNULL(TotalWorkmanship, 0) AS TotalWorkmanship,
+                    ISNULL(AvgWorkmanship, 0) AS AvgWorkmanship,
+                    ISNULL(PerformanceCategory, 0) AS PerformanceCategory
+                FROM DailyUserSummary2
+                WHERE UserId = @UserId
+                ORDER BY WorkDate DESC";
+
+            var data = await connection.QueryAsync(query2, new { UserId = userId });
 
             var sequence = new List<float[]>();
             foreach (var row in data)
@@ -185,33 +197,73 @@ namespace backendSMT.Repositories
                 sequence.Add(new float[]
                 {
                     (float)(row.FinishedToday ?? 0),
-                    (float)(row.EfficiencyScore ?? 0),
-                    (float)(row.TotalWorkmanship ?? 0)
+                    //(float)(row.EfficiencyScore ?? 0),
+                    (float)(row.AvgWorkmanship ?? 0),
+                    (float)(row.TotalWorkmanship ?? 0),
+                    (float)(row.PerformanceCategory ?? 0)  
                 });
             }
 
-            sequence.Reverse(); // dari paling lama ke terbaru
+            /*sequence.Reverse();*/ // dari paling lama ke terbaru
             return sequence;
         }
 
+        // untuk memanggil API eksternal untuk prediksi performa karyawan
+        //private async Task<int> GetPerformancePredictionAsync(int finishedToday, int avgWorkInSeconds, int totalWorkmanship)
+        //{
+        //    var payload = new { FinishedToday = finishedToday, AvgWorkmanship = avgWorkInSeconds, TotalWorkmanship = totalWorkmanship };
+        //    var content = new StringContent(JsonConvert.SerializeObject(payload), System.Text.Encoding.UTF8, "application/json");
 
-        private async Task<int> GetPerformancePredictionAsync(int finishedToday, int avgWorkInSeconds, int totalWorkmanship)
+        //    try
+        //    {
+        //        var response = await _httpClient.PostAsync("predict/performance", content);
+        //        response.EnsureSuccessStatusCode();
+        //        var responseJson = await response.Content.ReadAsStringAsync();
+        //        dynamic result = JsonConvert.DeserializeObject(responseJson);
+        //        return (int)result.PerformanceCategory;
+        //    }
+        //    catch { return -1; }
+        //}
+
+        private async Task<int> GetPerformancePredictionAsync(
+            List<float[]> sequence
+        )
         {
-            var payload = new { FinishedToday = finishedToday, AvgWorkmanship = avgWorkInSeconds, TotalWorkmanship = totalWorkmanship };
-            var content = new StringContent(JsonConvert.SerializeObject(payload), System.Text.Encoding.UTF8, "application/json");
+            var payload = new
+            {
+                sequence = sequence
+            };
+
+            var content = new StringContent(
+                JsonConvert.SerializeObject(payload),
+                System.Text.Encoding.UTF8,
+                "application/json"
+            );
 
             try
             {
-                var response = await _httpClient.PostAsync("predict/performance", content);
+                var response = await _httpClient.PostAsync(
+                    "predict/performance",
+                    content
+                );
+
                 response.EnsureSuccessStatusCode();
-                var responseJson = await response.Content.ReadAsStringAsync();
-                dynamic result = JsonConvert.DeserializeObject(responseJson);
+
+                var responseJson =
+                    await response.Content.ReadAsStringAsync();
+
+                dynamic result =
+                    JsonConvert.DeserializeObject(responseJson);
+
                 return (int)result.PerformanceCategory;
             }
-            catch { return -1; }
+            catch
+            {
+                return -1;
+            }
         }
 
-
+        // untuk memanggil API eksternal untuk prediksi pekerjaan yang diselesaikan di hari ke 8
         private async Task<int> GetLSTMPredictionAsync(List<float[]> sequence)
         {
             var payload = new { sequence };
@@ -225,7 +277,7 @@ namespace backendSMT.Repositories
                 dynamic result = JsonConvert.DeserializeObject(responseJson);
                 return (int)Math.Round((float)result.PredictedFinishedTomorrow);
             }
-            catch { return -1; }
+            catch { return 0; }
         }
 
 
