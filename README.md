@@ -373,7 +373,7 @@ Main Features:
 
 Software Engineering Technology
 
-Politeknik Negeri Batam
+Batam State Polytechnic
 
 2026
 
